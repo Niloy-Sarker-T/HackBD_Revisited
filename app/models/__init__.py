@@ -1,0 +1,31 @@
+from app.models.entities import (
+    ActivityLog,
+    Hackathon,
+    HackathonJudge,
+    HackathonRegistration,
+    Notification,
+    Project,
+    ProjectScore,
+    Report,
+    RoleRequest,
+    TalentInterest,
+    Team,
+    TeamMember,
+    User,
+)
+
+__all__ = [
+    "ActivityLog",
+    "Hackathon",
+    "HackathonJudge",
+    "HackathonRegistration",
+    "Notification",
+    "Project",
+    "ProjectScore",
+    "Report",
+    "RoleRequest",
+    "TalentInterest",
+    "Team",
+    "TeamMember",
+    "User",
+]

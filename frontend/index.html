@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HackBD Console</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="HackBD home">
+        <span class="brand-mark">HB</span>
+        <span>
+          <strong>HackBD</strong>
+          <small>Hackathon ops console</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <button class="nav-button active" data-view="home" type="button">Discover</button>
+        <button class="nav-button" data-view="student" type="button">Student</button>
+        <button class="nav-button" data-view="organizer" type="button">Organizer</button>
+        <button class="nav-button" data-view="judge" type="button">Judge</button>
+        <button class="nav-button" data-view="talent" type="button">Talent</button>
+        <button class="nav-button" data-view="admin" type="button">Admin</button>
+      </nav>
+      <div class="status-pill" id="apiStatus">API: checking</div>
+    </header>
+
+    <main class="shell">
+      <aside class="sidebar" aria-label="Account">
+        <section class="panel auth-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Account</p>
+            <h1>Sign in or create a test user.</h1>
+          </div>
+
+          <div class="tabs" role="tablist" aria-label="Auth forms">
+            <button class="tab active" data-auth-tab="login" type="button">Login</button>
+            <button class="tab" data-auth-tab="register" type="button">Register</button>
+          </div>
+
+          <form id="loginForm" class="stack auth-form">
+            <label>
+              Email
+              <input name="email" type="email" value="admin@example.com" autocomplete="email" required />
+            </label>
+            <label>
+              Password
+              <input name="password" type="password" value="admin12345" autocomplete="current-password" required />
+            </label>
+            <button class="button primary" type="submit">Login</button>
+          </form>
+
+          <form id="registerForm" class="stack auth-form hidden">
+            <label>
+              Full name
+              <input name="full_name" type="text" placeholder="Nadia Rahman" required />
+            </label>
+            <label>
+              Email
+              <input name="email" type="email" placeholder="nadia@example.com" required />
+            </label>
+            <label>
+              Password
+              <input name="password" type="password" placeholder="Minimum 8 characters" required />
+            </label>
+            <label>
+              University
+              <input name="university" type="text" placeholder="BUET" />
+            </label>
+            <label>
+              Skills
+              <input name="skills" type="text" placeholder="python, ui, ml" />
+            </label>
+            <button class="button primary" type="submit">Create account</button>
+          </form>
+        </section>
+
+        <section class="panel profile-panel">
+          <div class="panel-heading compact">
+            <p class="eyebrow">Session</p>
+            <h2 id="sessionTitle">Not logged in</h2>
+          </div>
+          <div id="profileBox" class="profile-box muted">Login to use protected API actions.</div>
+          <button id="logoutButton" class="button block hidden" type="button">Logout</button>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading compact">
+            <p class="eyebrow">Role request</p>
+            <h2>Ask for access</h2>
+          </div>
+          <form id="roleRequestForm" class="stack">
+            <label>
+              Requested role
+              <select name="requested_role">
+                <option value="hack_org">Organizer</option>
+                <option value="talent_hunter">Talent hunter</option>
+              </select>
+            </label>
+            <label>
+              University
+              <input name="university" type="text" placeholder="BUET" />
+            </label>
+            <label>
+              Reason
+              <textarea name="reason" rows="4" placeholder="I represent a university club and want to host hackathons." required></textarea>
+            </label>
+            <button class="button" type="submit">Submit request</button>
+          </form>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <div id="toast" class="toast hidden" role="status"></div>
+
+        <section class="view active" id="view-home">
+          <div class="view-header">
+            <div>
+              <p class="eyebrow">Public API</p>
+              <h2>Discover hackathons</h2>
+            </div>
+            <button id="refreshHackathons" class="button" type="button">Refresh</button>
+          </div>
+          <form id="hackathonFilters" class="toolbar">
+            <input name="search" type="search" placeholder="Search title or description" />
+            <input name="university" type="text" placeholder="University" />
+            <input name="theme" type="text" placeholder="Theme" />
+            <button class="button" type="submit">Filter</button>
+          </form>
+          <div id="hackathonList" class="grid-list"></div>
+        </section>
+
+        <section class="view" id="view-student">
+          <div class="view-header">
+            <div>
+              <p class="eyebrow">Student APIs</p>
+              <h2>Register, form teams, submit projects</h2>
+            </div>
+            <button id="loadRegistrations" class="button" type="button">My registrations</button>
+          </div>
+          <div class="two-column">
+            <section class="panel">
+              <h3>Register for hackathon</h3>
+              <form id="registerHackathonForm" class="stack">
+                <label>Hackathon ID <input name="hackathon_id" type="number" min="1" required /></label>
+                <button class="button primary" type="submit">Register</button>
+              </form>
+            </section>
+            <section class="panel">
+              <h3>Create team</h3>
+              <form id="teamForm" class="stack">
+                <label>Hackathon ID <input name="hackathon_id" type="number" min="1" required /></label>
+                <label>Team name <input name="name" type="text" required /></label>
+                <label>Desired skills <input name="desired_skills" type="text" placeholder="backend, design" /></label>
+                <label>Description <textarea name="description" rows="3"></textarea></label>
+                <button class="button primary" type="submit">Create team</button>
+              </form>
+            </section>
+          </div>
+          <section class="panel">
+            <h3>Create project</h3>
+            <form id="projectForm" class="stack compact-form">
+              <label>Team ID <input name="team_id" type="number" min="1" required /></label>
+              <label>Title <input name="title" type="text" required /></label>
+              <label>Tagline <input name="tagline" type="text" /></label>
+              <label>Description <textarea name="description" rows="4" required></textarea></label>
+              <label>Repo URL <input name="repo_url" type="url" /></label>
+              <label>Demo URL <input name="demo_url" type="url" /></label>
+              <label>Image URLs <input name="image_urls" type="text" placeholder="https://..., https://..." /></label>
+              <button class="button primary" type="submit">Create draft project</button>
+            </form>
+          </section>
+          <div id="studentOutput" class="output"></div>
+        </section>
+
+        <section class="view" id="view-organizer">
+          <div class="view-header">
+            <div>
+              <p class="eyebrow">Organizer APIs</p>
+              <h2>Create and manage hackathons</h2>
+            </div>
+            <button id="loadOrganizerHackathons" class="button" type="button">Load mine</button>
+          </div>
+          <section class="panel">
+            <form id="hackathonForm" class="stack compact-form">
+              <label>Title <input name="title" type="text" placeholder="BUET Hack 2026" required /></label>
+              <label>Description <textarea name="description" rows="4" required></textarea></label>
+              <label>University <input name="university" type="text" placeholder="BUET" /></label>
+              <label>Theme <input name="theme" type="text" placeholder="AI for Education" /></label>
+              <label>Min team <input name="min_team_size" type="number" min="1" value="1" /></label>
+              <label>Max team <input name="max_team_size" type="number" min="1" value="4" /></label>
+              <label>Rules <textarea name="rules" rows="3"></textarea></label>
+              <button class="button primary" type="submit">Create hackathon</button>
+            </form>
+          </section>
+          <div id="organizerList" class="grid-list"></div>
+        </section>
+
+        <section class="view" id="view-judge">
+          <div class="view-header">
+            <div>
+              <p class="eyebrow">Judge APIs</p>
+              <h2>Assignments and scoring</h2>
+            </div>
+            <button id="loadJudgeAssignments" class="button" type="button">Load assignments</button>
+          </div>
+          <section class="panel">
+            <form id="scoreForm" class="stack compact-form">
+              <label>Project ID <input name="project_id" type="number" min="1" required /></label>
+              <label>Total score <input name="total_score" type="number" min="0" max="100" value="80" required /></label>
+              <label>Criteria scores <input name="criteria_scores" type="text" placeholder="innovation:85, design:75" /></label>
+              <label>Feedback <textarea name="feedback" rows="3"></textarea></label>
+              <button class="button primary" type="submit">Submit score</button>
+            </form>
+          </section>
+          <div id="judgeOutput" class="output"></div>
+        </section>
+
+        <section class="view" id="view-talent">
+          <div class="view-header">
+            <div>
+              <p class="eyebrow">Talent hunter APIs</p>
+              <h2>Find and save students</h2>
+            </div>
+            <button id="loadSavedTalent" class="button" type="button">Saved</button>
+          </div>
+          <form id="talentSearchForm" class="toolbar">
+            <input name="search" type="search" placeholder="Name" />
+            <input name="university" type="text" placeholder="University" />
+            <input name="skills" type="text" placeholder="python, ml" />
+            <button class="button primary" type="submit">Search</button>
+          </form>
+          <div id="talentList" class="grid-list"></div>
+        </section>
+
+        <section class="view" id="view-admin">
+          <div class="view-header">
+            <div>
+              <p class="eyebrow">Admin APIs</p>
+              <h2>Role requests and moderation</h2>
+            </div>
+            <div class="button-row">
+              <button id="loadRoleRequests" class="button" type="button">Role requests</button>
+              <button id="loadReports" class="button" type="button">Reports</button>
+              <button id="loadUsers" class="button" type="button">Users</button>
+            </div>
+          </div>
+          <div id="adminOutput" class="grid-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
