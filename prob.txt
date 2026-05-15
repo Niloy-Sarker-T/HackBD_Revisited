@@ -1,0 +1,6 @@
+1) login issue - frontend 573 but its not
+2) cors error but it wasn't another error
+That value is a STRING, not a Python list.
++ config crash something 
+3)then fixing cors[which was a side effect]- backend crashed while 
+requesting login-- compatible issue 

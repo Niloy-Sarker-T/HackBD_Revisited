@@ -1,4 +1,4 @@
-const API_BASE = localStorage.getItem("hackbd_api_base") || `${window.location.origin}/api/v1`;
+const API_BASE = localStorage.getItem("hackbd_api_base") || "http://127.0.0.1:8000/api/v1";
 
 const state = {
   token: localStorage.getItem("hackbd_token") || "",
@@ -152,7 +152,7 @@ function requireLogin() {
 
 async function checkApi() {
   try {
-    const response = await fetch(`${API_BASE.replace("/api/v1", "")}/health`);
+    const response = await fetch("http://127.0.0.1:8000/health");
     if (!response.ok) throw new Error("offline");
     els.apiStatus.textContent = "API: online";
     els.apiStatus.classList.remove("offline");
